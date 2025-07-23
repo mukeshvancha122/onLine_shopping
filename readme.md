@@ -32,4 +32,8 @@ Keyload for the authentication
 Resilience4J: is the async communication, Kafka for order and notification service
 
 
+MONGODB 
+Database User Username: Cluster43081
+Database User Password: eVRNSVR7dXxq
+
 HTTP ----> Controller --> service ---> Repository 
