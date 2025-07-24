@@ -15,8 +15,6 @@ public class InventoryServiceImpl implements InventoryService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    @Autowired
-    private List<InventoryResponseDto> inventoryResponseDto;
 
     @Override
     public List<InventoryResponseDto> isInStock(List<String> skuCode) {

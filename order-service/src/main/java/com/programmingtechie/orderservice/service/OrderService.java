@@ -44,17 +44,18 @@ public class OrderService {
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+        System.out.println("Order Line Items: " + orderLineItems);
 
         order.setOrderLineItemsList(orderLineItems);
         List<String> skucodes= orderLineItems.stream().map(OrderLineItems::getSkuCode).collect(Collectors.toList());
 
 //        calling the inventory service to check if the items are in stock
-        InventoryResponseDto[] inventoryResponseDtoList= Objects.requireNonNull(webClient.get()
-                .uri("http://localhost:8003/api/v1/inventory", uriBuilder -> uriBuilder.queryParam("skuCode", skucodes).build())
+        InventoryResponseDto[] inventoryResponseDtoList= webClient.get()
+                .uri("http://localhost:8003/api/v1/inventory/status", uriBuilder -> uriBuilder.queryParam("skuCode", skucodes).build())
                 .retrieve()
-                .bodyToMono(InventoryResponseDto[].class)
-                .block());
+                .bodyToMono(InventoryResponseDto[].class).block();
 
+        assert inventoryResponseDtoList != null;
         boolean productsInStockArray=Arrays.stream(inventoryResponseDtoList).allMatch(InventoryResponseDto::isInStock);
         if(productsInStockArray){
             orderRepository.save(order);
@@ -64,6 +65,10 @@ public class OrderService {
         }
 
 
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
     }
 
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {

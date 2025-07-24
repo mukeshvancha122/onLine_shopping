@@ -20,7 +20,7 @@ public class InventoryController {
     }
 
     //    example URI=http://localhost:8082/api/v1/inventory/status?skuCode=iphone_13,iphone_14
-    @GetMapping("/status/{skuCode}")
+    @GetMapping("/status")
     public ResponseEntity<List<InventoryResponseDto>> isIntStock(@RequestParam List<String> skuCode){
         List<InventoryResponseDto> stockDetails = inventoryService.isInStock(skuCode);
         return ResponseEntity.ok(stockDetails);
