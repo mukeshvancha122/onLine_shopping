@@ -9,14 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
-    @Autowired
-    private final ProductService productService;
 
+    private final ProductService productService;
+    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -30,8 +29,9 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDTO);
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
-
+        List<ProductResponseDTO> products=productService.getAllProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 }

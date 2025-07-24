@@ -10,6 +10,11 @@ import java.util.UUID;
 
 @Document("product")
 public class Product {
+    @Id
+    private ObjectId productId;
+    private String productName;
+    private String productDescription;
+    private double productPrice;
     public ObjectId getProductId() {
         return productId;
     }
@@ -42,11 +47,7 @@ public class Product {
         this.productPrice = productPrice;
     }
 
-    @Id
-    private ObjectId productId;
-    private String productName;
-    private String productDescription;
-    private double productPrice;
+
 
 
 
