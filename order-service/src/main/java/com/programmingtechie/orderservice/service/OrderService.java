@@ -34,7 +34,7 @@ public class OrderService {
                 .toList();
 
         order.setOrderLineItemsList(orderLineItems);
-        order = orderRepository.save(order);
+        orderRepository.save(order);
 
     }
 
