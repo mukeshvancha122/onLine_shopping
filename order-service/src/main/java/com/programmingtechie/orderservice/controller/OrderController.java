@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/v1/order")
@@ -34,8 +33,4 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.getAllOrders());
     }
 
-//    public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
-//        log.info("Cannot Place Order Executing Fallback logic");
-//        return CompletableFuture.supplyAsync(() -> "Oops! Something went wrong, please order after some time!");
-//    }
 }
