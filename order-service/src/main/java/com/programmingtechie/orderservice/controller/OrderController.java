@@ -22,18 +22,21 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @CircuitBreaker(name="inventoryService",fallbackMethod = "fallbackPlaceOrder")
-    @TimeLimiter(name = "inventoryService")
-    public CompletableFuture<String> placeOrder(@RequestBody OrderRequest orderRequest) {
+    @PostMapping("/create")
+//    @CircuitBreaker(name="inventoryService",fallbackMethod = "fallbackPlaceOrder")
+//    @TimeLimiter(name = "inventoryService")
+//    public CompletableFuture<String> placeOrder(@RequestBody OrderRequest orderRequest) {
+//        orderService.placeOrder(orderRequest);
+//        return CompletableFuture.supplyAsync(()->"Order created successfully!");
+//    }
+    public ResponseEntity<String> placeOrder(@RequestBody OrderRequest orderRequest) {
         orderService.placeOrder(orderRequest);
-        return CompletableFuture.supplyAsync(()->"Order created successfully!");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Order created successfully!");
     }
-    public CompletableFuture<String> fallbackPlaceOrder(OrderRequest orderRequest, RuntimeException runtimeException) {
-        log.info("Exception : "+ runtimeException+"Order creation failed due to inventory service issue"+orderRequest);
-        return CompletableFuture.supplyAsync(() -> "Order creation failed, please try again later.");
-    }
+//    public CompletableFuture<String> fallbackPlaceOrder(OrderRequest orderRequest, RuntimeException runtimeException) {
+//        log.info("Exception : "+ runtimeException+"Order creation failed due to inventory service issue"+orderRequest);
+//        return CompletableFuture.supplyAsync(() -> "Order creation failed, please try again later.");
+//    }
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)

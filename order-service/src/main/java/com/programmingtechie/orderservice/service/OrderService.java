@@ -31,9 +31,9 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient webClient;
     @Autowired
-    public OrderService(OrderRepository orderRepository, WebClient.Builder webClient) {
+    public OrderService(OrderRepository orderRepository, WebClient webClient) {
         this.orderRepository = orderRepository;
-        this.webClient = webClient.build();
+        this.webClient = webClient;
     }
 
     public void placeOrder(OrderRequest orderRequest) {
@@ -48,10 +48,11 @@ public class OrderService {
 
         order.setOrderLineItemsList(orderLineItems);
         List<String> skucodes= orderLineItems.stream().map(OrderLineItems::getSkuCode).collect(Collectors.toList());
-
+        log.info("Order Line Items SKU Codes: {}", skucodes);
 //        calling the inventory service to check if the items are in stock
         InventoryResponseDto[] inventoryResponseDtoList= webClient.get()
                 .uri("http://localhost:8003/api/v1/inventory/status", uriBuilder -> uriBuilder.queryParam("skuCode", skucodes).build())
+                .headers(headers->log.info("OutGoing headers:{}",headers))
                 .retrieve()
                 .bodyToMono(InventoryResponseDto[].class).block();
 
