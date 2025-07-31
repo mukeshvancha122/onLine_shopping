@@ -4,6 +4,7 @@ import com.programmingtechie.orderservice.config.WebClientConfig;
 import com.programmingtechie.orderservice.dto.InventoryResponseDto;
 import com.programmingtechie.orderservice.dto.OrderLineItemsDto;
 import com.programmingtechie.orderservice.dto.OrderRequest;
+import com.programmingtechie.orderservice.events.OrderPlacedEvent;
 import com.programmingtechie.orderservice.model.Order;
 import com.programmingtechie.orderservice.model.OrderLineItems;
 import com.programmingtechie.orderservice.repository.OrderRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -30,10 +32,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final WebClient webClient;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
     @Autowired
-    public OrderService(OrderRepository orderRepository, WebClient webClient) {
+    public OrderService(OrderRepository orderRepository, WebClient webClient,KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate) {
         this.orderRepository = orderRepository;
         this.webClient = webClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public void placeOrder(OrderRequest orderRequest) {
@@ -60,6 +64,7 @@ public class OrderService {
         boolean productsInStockArray=Arrays.stream(inventoryResponseDtoList).allMatch(InventoryResponseDto::isInStock);
         if(productsInStockArray){
             orderRepository.save(order);
+            kafkaTemplate.send("notificationTopic",new OrderPlacedEvent(order.getOrderNumber()));
         }
         else {
             log.error("Products are not in stock, cannot place order");
